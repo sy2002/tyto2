@@ -21,7 +21,6 @@ if {[llength [get_ports { clk_in           }]]} {set_property -dict { PACKAGE_PI
 if {[llength [get_ports { max10_clk        }]]} {set_property -dict { PACKAGE_PIN L16   IOSTANDARD LVCMOS33                                    } [get_ports { max10_clk        }] } ;#
 if {[llength [get_ports { max10_tx         }]]} {set_property -dict { PACKAGE_PIN M13   IOSTANDARD LVCMOS33                                    } [get_ports { max10_tx         }] } ;# Interface to MAX10
 if {[llength [get_ports { max10_rx         }]]} {set_property -dict { PACKAGE_PIN K16   IOSTANDARD LVCMOS33                                    } [get_ports { max10_rx         }] } ;#
-if {[llength [get_ports { led              }]]} {set_property -dict { PACKAGE_PIN U22   IOSTANDARD LVCMOS33                                    } [get_ports { led              }] } ;# user LED
 if {[llength [get_ports { uart_rx          }]]} {set_property -dict { PACKAGE_PIN L14   IOSTANDARD LVCMOS33                                    } [get_ports { uart_rx          }] } ;#
 if {[llength [get_ports { uart_tx          }]]} {set_property -dict { PACKAGE_PIN L13   IOSTANDARD LVCMOS33                                    } [get_ports { uart_tx          }] } ;# USB serial
 if {[llength [get_ports { kb_io0           }]]} {set_property -dict { PACKAGE_PIN A14   IOSTANDARD LVCMOS33                                    } [get_ports { kb_io0           }] } ;#
@@ -70,9 +69,9 @@ if {[llength [get_ports { sd2_dat[0]       }]]} {set_property -dict { PACKAGE_PI
 if {[llength [get_ports { sd2_dat[1]       }]]} {set_property -dict { PACKAGE_PIN H3    IOSTANDARD LVCMOS33                                    } [get_ports { sd2_dat[1]       }] } ;#
 if {[llength [get_ports { sd2_dat[2]       }]]} {set_property -dict { PACKAGE_PIN J1    IOSTANDARD LVCMOS33                                    } [get_ports { sd2_dat[2]       }] } ;#
 if {[llength [get_ports { sd2_dat[3]       }]]} {set_property -dict { PACKAGE_PIN K2    IOSTANDARD LVCMOS33                                    } [get_ports { sd2_dat[3]       }] } ;#
-if {[llength [get_ports { vga_clk          }]]} {set_property -dict { PACKAGE_PIN AA9   IOSTANDARD LVCMOS33                                    } [get_ports { vga_clk          }] } ;# VGA out
-if {[llength [get_ports { vga_sync_n       }]]} {set_property -dict { PACKAGE_PIN V10   IOSTANDARD LVCMOS33                                    } [get_ports { vga_sync_n       }] } ;#
-if {[llength [get_ports { vga_blank_n      }]]} {set_property -dict { PACKAGE_PIN W11   IOSTANDARD LVCMOS33                                    } [get_ports { vga_blank_n      }] } ;#
+if {[llength [get_ports { vga_vdac_clk     }]]} {set_property -dict { PACKAGE_PIN AA9   IOSTANDARD LVCMOS33                                    } [get_ports { vga_vdac_clk     }] } ;# VGA out
+if {[llength [get_ports { vga_vdac_sync_n  }]]} {set_property -dict { PACKAGE_PIN V10   IOSTANDARD LVCMOS33                                    } [get_ports { vga_vdac_sync_n  }] } ;#
+if {[llength [get_ports { vga_vdac_blank_n }]]} {set_property -dict { PACKAGE_PIN W11   IOSTANDARD LVCMOS33                                    } [get_ports { vga_vdac_blank_n }] } ;#
 if {[llength [get_ports { vga_vsync        }]]} {set_property -dict { PACKAGE_PIN V14   IOSTANDARD LVCMOS33                                    } [get_ports { vga_vsync        }] } ;#
 if {[llength [get_ports { vga_hsync        }]]} {set_property -dict { PACKAGE_PIN W12   IOSTANDARD LVCMOS33                                    } [get_ports { vga_hsync        }] } ;#
 if {[llength [get_ports { vga_r[0]         }]]} {set_property -dict { PACKAGE_PIN U15   IOSTANDARD LVCMOS33                                    } [get_ports { vga_r[0]         }] } ;#

@@ -75,10 +75,10 @@ entity hdmi_tpg_mega65r3 is
     sd2_mosi                : out   std_logic;
     sd2_miso                : in    std_logic;
 
-    vga_clk                 : out   std_logic;                      -- VGA out
-    vga_sync_n              : out   std_logic;
-    vga_blank_n             : out   std_logic;
-    vga_vsync               : out   std_logic;
+    vga_vdac_clk            : out   std_logic;                      -- VGA VDAC
+    vga_vdac_sync_n         : out   std_logic;
+    vga_vdac_blank_n        : out   std_logic;
+    vga_vsync               : out   std_logic;                      -- VGA out
     vga_hsync               : out   std_logic;
     vga_r                   : out   std_logic_vector (7 downto 0);
     vga_g                   : out   std_logic_vector (7 downto 0);
@@ -205,6 +205,14 @@ architecture synth of hdmi_tpg_mega65r3 is
   -- MEGA65 specific signals
   signal floppyled    : std_logic;
   signal key_return_n : std_logic;
+  
+  signal vga_clk      : std_logic;
+  signal vga_vs       : std_logic;
+  signal vga_hs       : std_logic;
+  signal vga_de       : std_logic;
+  signal vga_red      : std_logic_vector(7 downto 0);
+  signal vga_green    : std_logic_vector(7 downto 0);
+  signal vga_blue     : std_logic_vector(7 downto 0);  
 
 begin
 
@@ -224,10 +232,21 @@ begin
       dvi        => dvi,
       heartbeat  => heartbeat,
       status     => status,
+      
+      -- HDMI out
       hdmi_clk_p => hdmi_clk_p,
       hdmi_clk_n => hdmi_clk_n,
       hdmi_d_p   => hdmi_data_p,
-      hdmi_d_n   => hdmi_data_n
+      hdmi_d_n   => hdmi_data_n,
+      
+      -- VGA out
+      vga_clk_o  => vga_clk,
+      vga_vs_o   => vga_vs,
+      vga_hs_o   => vga_hs,
+      vga_de_o   => vga_de,
+      vga_r_o    => vga_red,
+      vga_g_o    => vga_green,
+      vga_b_o    => vga_blue
     );
 
    M65_KEYB: entity work.keyboard
@@ -245,15 +264,41 @@ begin
       return_out  => key_return_n,
       fastkey_out => open          
     );
-
+    
+  -- Make the MEGA65 VDAC (ADV7125BCPZ170) output the image:
+  --
+  -- Excerpts taken from the data sheet Rev D, page 8, table 6:
+  --    "sync":  If sync information is not required on the green channel, the SYNC input should be tied to Logic 0.
+  --    "blank": A Logic 0 on this control input drives the analog outputs [...] to the blanking level.
+  -- So as we do not do any "sync on green", we set sync to 0 and since we do not want to use the VDAC to
+  -- blank the screen (i.e. set the analog R, G and B to 0), we hard-wire blank to 1.
+  vga_vdac_sync_n   <= '0';
+  vga_vdac_blank_n  <= '1';
+  vga_vdac_clk      <= not vga_clk; -- phase shifted so that the VDAC can sample the stabilized signals
+  
+  -- The MEGA65 VDAC (ADV7125BCPZ170) does not like non-zero color values outside the visible window.
+  -- This is why we explicitly set R, G, B to zero outside of "data enable".
+  vga_vsync   <= vga_vs;
+  vga_hsync   <= vga_hs;
+  vga_data_enable : process(all)
+  begin
+     if vga_de = '1' then
+        vga_r <= vga_red;
+        vga_g <= vga_green;
+        vga_b <= vga_blue;
+     else
+        vga_r <= (others => '0');
+        vga_g <= (others => '0');
+        vga_b <= (others => '0');
+     end if;
+  end process vga_data_enable;      
+    
   -- safe states for unused I/Os
-
   max10_clk      <= 'Z'; -- assumed
   max10_rx       <= '1';
---led            <= '1'; -- on
   uart_tx        <= '1';
---  kb_io0         <= '0'; -- assumed
---  kb_io1         <= '0'; -- assumed
+--kb_io0         <= '0'; -- assumed
+--kb_io1         <= '0'; -- assumed
   kb_jtagen      <= '0'; -- assumed
   paddle_drain   <= '0';
   i2c_sda        <= 'Z';
@@ -266,14 +311,14 @@ begin
   sd2_ss_n       <= '1';
   sd2_clk        <= '0';
   sd2_mosi       <= '0';
-  vga_clk        <= '0';
-  vga_sync_n     <= '0';
-  vga_blank_n    <= '1';
-  vga_vsync      <= '0';
-  vga_hsync      <= '0';
-  vga_r          <= (others => '0');
-  vga_g          <= (others => '0');
-  vga_b          <= (others => '0');
+--vga_vdac_clk   <= '0';
+--vga_vdac_sync_n    <= '0';
+--vga_vdac_blank_n   <= '1';
+--vga_vsync      <= '0';
+--vga_hsync      <= '0';
+--vga_r          <= (others => '0');
+--vga_g          <= (others => '0');
+--vga_b          <= (others => '0');
 --hdmi_clk_p     <= (others => '0');
 --hdmi_clk_n     <= (others => '1');
 --hdmi_data_p    <= (others => '0');

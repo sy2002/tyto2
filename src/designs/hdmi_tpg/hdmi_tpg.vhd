@@ -39,8 +39,15 @@ package hdmi_tpg_pkg is
       hdmi_clk_p : out   std_logic;
       hdmi_clk_n : out   std_logic;
       hdmi_d_p   : out   std_logic_vector(0 to 2);
-      hdmi_d_n   : out   std_logic_vector(0 to 2)
-
+      hdmi_d_n   : out   std_logic_vector(0 to 2);
+      
+      vga_clk_o  : out   std_logic;
+      vga_vs_o   : out   std_logic;
+      vga_hs_o   : out   std_logic;
+      vga_de_o   : out   std_logic;
+      vga_r_o    : out   std_logic_vector(7 downto 0);
+      vga_g_o    : out   std_logic_vector(7 downto 0);
+      vga_b_o    : out   std_logic_vector(7 downto 0)
     );
   end component hdmi_tpg;
 
@@ -81,8 +88,15 @@ entity hdmi_tpg is
     hdmi_clk_p : out   std_logic;                    -- HDMI (TMDS) clock output (+ve)
     hdmi_clk_n : out   std_logic;                    -- HDMI (TMDS) clock output (-ve)
     hdmi_d_p   : out   std_logic_vector(0 to 2);     -- HDMI (TMDS) data output channels 0..2 (+ve)
-    hdmi_d_n   : out   std_logic_vector(0 to 2)      -- HDMI (TMDS) data output channels 0..2 (-ve)
-
+    hdmi_d_n   : out   std_logic_vector(0 to 2);     -- HDMI (TMDS) data output channels 0..2 (-ve)
+    
+    vga_clk_o  : out   std_logic;
+    vga_vs_o   : out   std_logic;
+    vga_hs_o   : out   std_logic;
+    vga_de_o   : out   std_logic;
+    vga_r_o    : out   std_logic_vector(7 downto 0);
+    vga_g_o    : out   std_logic_vector(7 downto 0);
+    vga_b_o    : out   std_logic_vector(7 downto 0)
   );
 end entity hdmi_tpg;
 
@@ -150,6 +164,14 @@ begin
 
   status(0) <= not pix_rst; -- pixel clock MMCM locked
   status(1) <= not pcm_rst; -- audio clock MMCM locked
+  
+  vga_clk_o <= pix_clk;
+  vga_vs_o  <= vga_vs;
+  vga_hs_o  <= vga_hs;
+  vga_de_o  <= vga_vblank nor vga_hblank;
+  vga_r_o   <= vga_r;
+  vga_g_o   <= vga_g;
+  vga_b_o   <= vga_b;
 
   DO_1KHZ: process (rst, clk) is
     variable counter : integer range 0 to 99999;
